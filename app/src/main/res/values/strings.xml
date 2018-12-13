@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Bux Assignment</string>
+    <string name="product_name">Product name:</string>
+    <string name="apple">apple</string>
+    <string name="current_price">Current price:</string>
+    <string name="zero">0</string>
+    <string name="product_identifier">Product identifier</string>
+    <string name="price_difference">Price difference in %</string>
+    <string name="closing_price">Closing price:</string>
 </resources>

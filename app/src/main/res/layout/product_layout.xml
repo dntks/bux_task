@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/product_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product_name"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/product_name_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/apple"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toRightOf="@id/product_name_title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/product_identifier_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product_identifier"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_name_title" />
+    <TextView
+        android:id="@+id/product_identifier_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zero"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toRightOf="@id/product_identifier_title"
+        app:layout_constraintTop_toBottomOf="@id/product_name_value" />
+
+    <TextView
+        android:id="@+id/product_currentprice_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current_price"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_identifier_title" />
+    <TextView
+        android:id="@+id/product_currentprice_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zero"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toRightOf="@id/product_currentprice_title"
+        app:layout_constraintTop_toBottomOf="@id/product_identifier_title" />
+
+    <TextView
+        android:id="@+id/product_closingprice_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/closing_price"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_currentprice_title" />
+    <TextView
+        android:id="@+id/product_closingprice_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zero"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toRightOf="@id/product_closingprice_title"
+        app:layout_constraintTop_toBottomOf="@id/product_currentprice_title" />
+
+    <TextView
+        android:id="@+id/product_pricedifference_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/price_difference"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_closingprice_title" />
+    <TextView
+        android:id="@+id/product_pricedifference_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zero"
+        android:layout_margin="@dimen/text_margin"
+        app:layout_constraintLeft_toRightOf="@id/product_pricedifference_title"
+        app:layout_constraintTop_toBottomOf="@id/product_closingprice_title" />
+
+
+</android.support.constraint.ConstraintLayout>
