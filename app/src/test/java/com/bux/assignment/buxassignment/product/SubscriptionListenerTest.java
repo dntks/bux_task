@@ -54,4 +54,14 @@ public class SubscriptionListenerTest {
         //assert
         verify(productUpdater).updateProduct(new TradingQuote("abcd", new BigDecimal("10692.3")));
     }
+
+    @Test
+    public void onMessage_whenMessageIsError_errorOnUpdateIsCalled() {
+
+        //act
+        subscriptionListener.onMessage(webSocket, "{\n" + "    \"t\": \"connect.failed\",\n" + "    \"body\": {\n" + "        \"developerMessage\": \"Missing JWT Access Token in request\",\n" + "        \"errorCode\": \"RTF_002\"\n" + "    }\n" + "}");
+
+        //assert
+        verify(productUpdater).errorOnUpdate("RTF_002: Missing JWT Access Token in request");
+    }
 }

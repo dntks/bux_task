@@ -5,4 +5,6 @@ import com.bux.assignment.buxassignment.websocket.TradingQuote;
 public interface ProductUpdater {
 
     void updateProduct(TradingQuote tradingQuote);
+
+    void errorOnUpdate(String error);
 }

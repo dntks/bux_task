@@ -33,7 +33,7 @@ public class ProductViewModel extends ViewModel {
     public LiveData<Product> getProductMutableLiveData(String productId, final String previousId) {
         if (productMutableLiveData == null) {
             productMutableLiveData = new MutableLiveData<>();
-            productUpdater = new ProductUpdaterImpl(productMutableLiveData);
+            productUpdater = new ProductUpdaterImpl(productMutableLiveData, productErrorListener);
             loadUsers(productId, previousId);
         }
         return productMutableLiveData;

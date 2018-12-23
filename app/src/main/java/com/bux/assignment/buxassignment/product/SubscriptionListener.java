@@ -6,6 +6,7 @@ import com.bux.assignment.buxassignment.product.updater.ProductUpdater;
 import com.bux.assignment.buxassignment.websocket.Event;
 import com.bux.assignment.buxassignment.websocket.SubscribeMessage;
 import com.bux.assignment.buxassignment.websocket.TradingQuote;
+import com.bux.assignment.buxassignment.websocket.WebSocketError;
 import com.bux.assignment.buxassignment.websocket.WebSocketResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,6 +53,10 @@ class SubscriptionListener extends WebSocketListener {
             Type collectionType = new TypeToken<WebSocketResponse<TradingQuote>>(){}.getType();
             WebSocketResponse<TradingQuote> tradingQuoteWebSocketResponse = gsonBuilder.create().fromJson(text, collectionType);
             productUpdater.updateProduct(tradingQuoteWebSocketResponse.getBody());
+        } else if(response.getEvent() == Event.CONNECT_FAILED){
+            Type collectionType = new TypeToken<WebSocketResponse<WebSocketError>>(){}.getType();
+            WebSocketResponse<WebSocketError> errorResponse = gsonBuilder.create().fromJson(text, collectionType);
+            productUpdater.errorOnUpdate(errorResponse.getBody().toString());
         }
     }
 
@@ -69,5 +74,6 @@ class SubscriptionListener extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.d(WEBSOCKET,"Error : " + t.getMessage());
+        // The errors from websocket are not handled.
     }
 }

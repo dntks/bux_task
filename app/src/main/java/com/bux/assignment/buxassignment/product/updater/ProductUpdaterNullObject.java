@@ -8,4 +8,9 @@ public class ProductUpdaterNullObject implements ProductUpdater {
     public void updateProduct(TradingQuote tradingQuote) {
         //null object not doing anything
     }
+
+    @Override
+    public void errorOnUpdate(String buxError) {
+        //null object not doing anything
+    }
 }
