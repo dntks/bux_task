@@ -1,4 +1,6 @@
-package com.bux.assignment.buxassignment.product;
+package com.bux.assignment.buxassignment.product.model;
+
+import com.bux.assignment.buxassignment.websocket.TradingQuote;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,10 +25,15 @@ public class Product {
         this.priceDifferenceInPercentage = calculatePriceDifferencePercentage();
     }
 
+    public Product cloneWithNewCurrentPrice(TradingQuote tradingQuote){
+        BigDecimal newPrice = tradingQuote.getCurrentPrice();
+        return new Product(identifier, productName, currentPrice.cloneWithNewAmount(newPrice), previousDayClosingPrice);
+    }
+
     private BigDecimal calculatePriceDifferencePercentage() {
-        BigDecimal priceChange = previousDayClosingPrice.getAmount().subtract(currentPrice.getAmount());
+        BigDecimal priceChange = currentPrice.getAmount().subtract(previousDayClosingPrice.getAmount());
         BigDecimal divide = priceChange.multiply(HUNDRED).divide(previousDayClosingPrice.getAmount(), currentPrice.getDecimals(), RoundingMode.HALF_UP);
-        return divide.abs();
+        return divide;
     }
 
     public String getProductName() {
@@ -49,7 +56,4 @@ public class Product {
         return String.format(PERCENTAGE_FORMAT, priceDifferenceInPercentage.toPlainString());
     }
 
-    public void updateCurrentPrice(BigDecimal currentPrice) {
-        this.currentPrice.setValue(currentPrice);
-    }
 }

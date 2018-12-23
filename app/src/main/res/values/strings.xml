@@ -7,4 +7,8 @@
     <string name="product_identifier">Product identifier</string>
     <string name="price_difference">Price difference in %</string>
     <string name="closing_price">Closing price:</string>
+    <string name="query_product">Query Product</string>
+    <string name="input_title_text">Enter a product identifier:</string>
+    <string name="loading">Loading...</string>
+    <string name="error">Some error happened while getting the response.</string>
 </resources>

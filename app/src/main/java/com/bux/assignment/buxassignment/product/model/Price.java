@@ -1,8 +1,8 @@
-package com.bux.assignment.buxassignment.product;
+package com.bux.assignment.buxassignment.product.model;
 
 import java.math.BigDecimal;
 
-class Price {
+public class Price {
 
     private final String currency;
 
@@ -14,6 +14,10 @@ class Price {
         this.currency = currency;
         this.decimals = decimals;
         this.amount = amount;
+    }
+
+    public Price cloneWithNewAmount(BigDecimal newAmount){
+        return new Price(currency, decimals, newAmount);
     }
 
     public String getCurrency() {

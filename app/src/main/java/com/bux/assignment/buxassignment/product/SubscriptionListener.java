@@ -2,8 +2,9 @@ package com.bux.assignment.buxassignment.product;
 
 import android.util.Log;
 
+import com.bux.assignment.buxassignment.product.updater.ProductUpdater;
 import com.bux.assignment.buxassignment.websocket.Event;
-import com.bux.assignment.buxassignment.websocket.Subscribe;
+import com.bux.assignment.buxassignment.websocket.SubscribeMessage;
 import com.bux.assignment.buxassignment.websocket.TradingQuote;
 import com.bux.assignment.buxassignment.websocket.WebSocketResponse;
 import com.google.gson.Gson;
@@ -19,12 +20,18 @@ import okio.ByteString;
 
 class SubscriptionListener extends WebSocketListener {
 
-    private final Gson gson = new Gson();
     private static final int NORMAL_CLOSURE_STATUS = 1000;
-    private final ProductViewModel productViewModel;
+    private final Gson gson;
+    private final GsonBuilder gsonBuilder;
 
-    public SubscriptionListener(ProductViewModel productViewModel) {
-        this.productViewModel = productViewModel;
+    private final ProductUpdater productUpdater;
+    private final SubscribeMessage subscribeMessage;
+
+    public SubscriptionListener(ProductUpdater productUpdater, SubscribeMessage subscribeMessage) {
+        this.productUpdater = productUpdater;
+        this.subscribeMessage = subscribeMessage;
+        gson = new Gson();
+        gsonBuilder = new GsonBuilder();
     }
 
     @Override
@@ -36,18 +43,12 @@ class SubscriptionListener extends WebSocketListener {
         Log.d("WEBSOCKET","Receiving : " + text);
         WebSocketResponse response = gson.fromJson(text, WebSocketResponse.class);
         if(response.getEvent() == Event.CONNECTED){
-
-            Gson gson = new Gson();
-            String subscribeMessage = gson.toJson(new Subscribe("sb26513", "q"));
-            webSocket.send(subscribeMessage);
+            String subscribeMessageJson = gson.toJson(subscribeMessage);
+            webSocket.send(subscribeMessageJson);
         } else if(response.getEvent() == Event.TRADING_QUOTE){
-
-            GsonBuilder gson = new GsonBuilder();
             Type collectionType = new TypeToken<WebSocketResponse<TradingQuote>>(){}.getType();
-
-            WebSocketResponse<TradingQuote> tradingQuoteWebSocketResponse = gson.create().fromJson(text, collectionType);
-
-            productViewModel.updateData(tradingQuoteWebSocketResponse.getBody());
+            WebSocketResponse<TradingQuote> tradingQuoteWebSocketResponse = gsonBuilder.create().fromJson(text, collectionType);
+            productUpdater.updateProduct(tradingQuoteWebSocketResponse.getBody());
         }
     }
 

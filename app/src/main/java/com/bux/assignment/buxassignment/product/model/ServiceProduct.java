@@ -1,4 +1,4 @@
-package com.bux.assignment.buxassignment.product;
+package com.bux.assignment.buxassignment.product.model;
 
 public class ServiceProduct {
 
