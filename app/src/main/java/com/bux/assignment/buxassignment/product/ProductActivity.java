@@ -20,10 +20,12 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,6 +36,10 @@ import com.bux.assignment.buxassignment.product.model.Product;
 public class ProductActivity extends AppCompatActivity {
 
     public static final String PRODUCT_ID = "productId";
+
+    public static final String SHARED_PREFS = "SHARED_PREFS";
+
+    public static final String LAST_PRODUCT_ID = "lastProductId";
 
     private TextView productNameTextView;
     private TextView productIdTextView;
@@ -89,7 +95,7 @@ public class ProductActivity extends AppCompatActivity {
                 errorTextView.setText(buxError.getMessage());
             }
         });
-        model.getProductMutableLiveData(productId).observe(this, new Observer<Product>() {
+        model.getProductMutableLiveData(productId, getPreviousId(productId)).observe(this, new Observer<Product>() {
             @Override
             public void onChanged(@Nullable Product product) {
                 progressView.setVisibility(View.GONE);
@@ -103,7 +109,27 @@ public class ProductActivity extends AppCompatActivity {
         });
     }
 
-    public static interface ProductErrorListener {
+    private String getPreviousId(String productId) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        String lastId = sharedPreferences.getString(LAST_PRODUCT_ID, "");
+        Log.d("Got previous id:", lastId);
+        if(productId.equals(lastId)){
+            //We don't want to ubsubscribe if the last is the same as the current
+            return "";
+        } else{
+            saveId(productId, sharedPreferences);
+            return lastId;
+        }
+    }
+
+    private void saveId(String productId, SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LAST_PRODUCT_ID, productId);
+        editor.commit();
+    }
+
+    public interface ProductErrorListener {
         void onProductError();
         void onProductError(String customString);
         void onProductError(BuxError buxError);

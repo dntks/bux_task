@@ -3,7 +3,6 @@ package com.bux.assignment.buxassignment.product;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
 
 import com.bux.assignment.buxassignment.error.BuxErrorException;
 import com.bux.assignment.buxassignment.error.ProductNotFoundException;
@@ -31,16 +30,16 @@ public class ProductViewModel extends ViewModel {
 
     private ProductActivity.ProductErrorListener productErrorListener;
 
-    public LiveData<Product> getProductMutableLiveData(String productId) {
+    public LiveData<Product> getProductMutableLiveData(String productId, final String previousId) {
         if (productMutableLiveData == null) {
             productMutableLiveData = new MutableLiveData<>();
             productUpdater = new ProductUpdaterImpl(productMutableLiveData);
-            loadUsers(productId);
+            loadUsers(productId, previousId);
         }
         return productMutableLiveData;
     }
 
-    private void loadUsers(final String productId) {
+    private void loadUsers(final String productId, final String previousId) {
         Observable.fromCallable(new Callable<ServiceProduct>() {
             @Override
             public ServiceProduct call() throws Exception {
@@ -51,7 +50,7 @@ public class ProductViewModel extends ViewModel {
             public void accept(ServiceProduct serviceProduct) throws Exception {
                 Product product = new Product(serviceProduct.getSecurityId(), serviceProduct.getDisplayName(), serviceProduct.getCurrentPrice(), serviceProduct.getClosingPrice());
                 productMutableLiveData.setValue(product);
-                buxService.callServerWebSocket(productUpdater, productId, getPreviousId(productId));
+                buxService.callServerWebSocket(productUpdater, productId, previousId);
             }
         }, new Consumer<Throwable>() {
             @Override
@@ -66,12 +65,6 @@ public class ProductViewModel extends ViewModel {
                 }
             }
         });
-    }
-
-    @NonNull
-    private String getPreviousId(String productId) {
-
-        return "k";
     }
 
     @Override

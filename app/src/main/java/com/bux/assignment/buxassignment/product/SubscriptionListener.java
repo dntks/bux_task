@@ -21,6 +21,9 @@ import okio.ByteString;
 class SubscriptionListener extends WebSocketListener {
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+
+    public static final String WEBSOCKET = "WEBSOCKET";
+
     private final Gson gson;
     private final GsonBuilder gsonBuilder;
 
@@ -36,11 +39,11 @@ class SubscriptionListener extends WebSocketListener {
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
+        Log.d(WEBSOCKET,"Opened.");
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        Log.d("WEBSOCKET","Receiving : " + text);
         WebSocketResponse response = gson.fromJson(text, WebSocketResponse.class);
         if(response.getEvent() == Event.CONNECTED){
             String subscribeMessageJson = gson.toJson(subscribeMessage);
@@ -54,17 +57,17 @@ class SubscriptionListener extends WebSocketListener {
 
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
-        Log.d("WEBSOCKET","Receiving bytes : " + bytes.hex());
+        Log.d(WEBSOCKET,"Receiving bytes : " + bytes.hex());
     }
 
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
-        webSocket.close(NORMAL_CLOSURE_STATUS, null);
-        Log.d("WEBSOCKET","Closing : " + code + " / " + reason);
+        webSocket.close(NORMAL_CLOSURE_STATUS, reason);
+        Log.d(WEBSOCKET,"Closing : " + code + " / " + reason);
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        Log.d("WEBSOCKET","Error : " + t.getMessage());
+        Log.d(WEBSOCKET,"Error : " + t.getMessage());
     }
 }
