@@ -18,40 +18,76 @@ package com.bux.assignment.buxassignment.product;
 
 import android.support.annotation.Nullable;
 
-import com.bux.assignment.buxassignment.inject.ActivityScoped;
+import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.util.concurrent.Callable;
 
-/**
- * Listens to user actions from the UI ({@link ProductFragment}), retrieves the data and updates the
- * UI as required.
- * <p/>
- * By marking the constructor with {@code @Inject}, Dagger injects the dependencies required to
- * create an instance of the TasksPresenter (if it fails, it emits a compiler error).  It uses
- * {@link ProductModule} to do so.
- * <p/>
- * Dagger generated code doesn't require public access to the constructor or class, and
- * therefore, to ensure the developer doesn't instantiate the class manually and bypasses Dagger,
- * it's good practice minimise the visibility of the class/constructor as much as possible.
- **/
-@ActivityScoped
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 final class ProductPresenter implements ProductContract.Presenter {
 
-    @Nullable
-    private ProductContract.View mTasksView;
 
-    private boolean mFirstLoad = true;
+    OkHttpClient okHttpClient = new OkHttpClient();
+
+    @Nullable
+    private ProductContract.View productView;
+
+    private String baseUrl = "http://10.0.2.2:8080/";
+
+    public ProductPresenter(ProductContract.View productView) {
+        this.productView = productView;
+        productView.setPresenter(this);
+        Observable.fromCallable(new Callable<ServiceProduct>() {
+            @Override
+            public ServiceProduct call() throws Exception {
+                return callServer();
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<ServiceProduct>() {
+                @Override
+                public void accept(ServiceProduct aBoolean) throws Exception {
+
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+
+                }
+            });
+    }
+
+    private ServiceProduct callServer() throws IOException {
+        Request request = new Request.Builder()
+            .url(baseUrl+"core/21/products/sb26513")
+            .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyZWZyZXNoYWJsZSI6ZmFsc2UsInN1YiI6ImJiMGNkYTJiLWExMGUtNGVkMy1hZDVhLTBmODJiNGMxNTJjNCIsImF1ZCI6ImJldGEuZ2V0YnV4LmNvbSIsInNjcCI6WyJhcHA6bG9naW4iLCJydGY6bG9naW4iXSwiZXhwIjoxODIwODQ5Mjc5LCJpYXQiOjE1MDU0ODkyNzksImp0aSI6ImI3MzlmYjgwLTM1NzUtNGIwMS04NzUxLTMzZDFhNGRjOGY5MiIsImNpZCI6Ijg0NzM2MjI5MzkifQ.M5oANIi2nBtSfIfhyUMqJnex-JYg6Sm92KPYaUL9GKg")
+            .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        String string = response.body().string();
+        Gson gson = new Gson();
+        return gson.fromJson(string, ServiceProduct.class);
+    }
 
     @Override
     public void result(int requestCode, int resultCode) {
     }
 
     @Override
-    public void takeView(ProductContract.View view) {
-        this.mTasksView = view;
+    public void subscribe() {
+
     }
 
     @Override
-    public void dropView() {
-        mTasksView = null;
+    public void unsubscribe() {
+
     }
 }

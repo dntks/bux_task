@@ -46,4 +46,6 @@ ext {
     roomVersion = "1.0.0"
     daggerVersion = '2.16'
     dexmakerVersion = '1.2'
+    rxjavaVersion = '2.1.3'
+    rxandroidVersion = '2.0.1'
 }

@@ -18,31 +18,32 @@ package com.bux.assignment.buxassignment.product;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bux.assignment.buxassignment.R;
-import com.bux.assignment.buxassignment.inject.ActivityScoped;
 
-import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Display a {@link Product}. User can choose to view all, active or completed tasks.
  */
-@ActivityScoped
-public class ProductFragment extends DaggerFragment implements ProductContract.View {
+public class ProductFragment extends Fragment implements ProductContract.View {
 
-    @Inject
     ProductContract.Presenter presenter;
 
-    @Inject
-    public ProductFragment() {
-        // Requires empty public constructor
+    @Override
+    public void setPresenter(@NonNull ProductContract.Presenter presenter) {
+        this.presenter = checkNotNull(presenter);
+    }
+
+    public static ProductFragment newInstance() {
+        return new ProductFragment();
     }
 
 
@@ -54,14 +55,13 @@ public class ProductFragment extends DaggerFragment implements ProductContract.V
     @Override
     public void onResume() {
         super.onResume();
-        presenter.takeView(this);
+        presenter.subscribe();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.dropView();  //prevent leaking activity in
-        // case presenter is orchestrating a long running task
+        presenter.unsubscribe();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ProductFragment extends DaggerFragment implements ProductContract.V
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.activity_main, container, false);
+        View root = inflater.inflate(R.layout.product_layout, container, false);
 
         setHasOptionsMenu(true);
 

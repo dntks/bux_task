@@ -30,7 +30,7 @@ public interface ProductContract {
 
     }
 
-    interface Presenter extends BasePresenter<View> {
+    interface Presenter extends BasePresenter {
 
         void result(int requestCode, int resultCode);
 

@@ -16,23 +16,45 @@
 
 package com.bux.assignment.buxassignment.product;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
-import javax.inject.Inject;
+import com.bux.assignment.buxassignment.R;
 
-import dagger.Lazy;
-import dagger.android.support.DaggerAppCompatActivity;
+public class ProductActivity extends AppCompatActivity {
 
-public class ProductActivity extends DaggerAppCompatActivity {
-
-    private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
-    @Inject
-    ProductPresenter productPresenter;
-    @Inject
-    Lazy<ProductFragment> productFragmentProvider;
+    TextView productName;
+    TextView productId;
+    TextView currentPrice;
+    TextView closingPrice;
+    TextView priceDifference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.product_act);
+        productName = findViewById(R.id.product_name_value);
+        productId = findViewById(R.id.product_identifier_value);
+        currentPrice = findViewById(R.id.product_currentprice_value);
+        closingPrice = findViewById(R.id.product_closingprice_value);
+        priceDifference = findViewById(R.id.product_pricedifference_value);
+
+
+        ProductViewModel model = ViewModelProviders.of(this).get(ProductViewModel.class);
+        model.getProductMutableLiveData().observe(this, new Observer<Product>() {
+            @Override
+            public void onChanged(@Nullable Product product) {
+                productName.setText(product.getProductName());
+                productId .setText(product.getIdentifier());
+                currentPrice .setText(product.getCurrentPrice().toString());
+                closingPrice .setText(product.getPreviousDayClosingPrice().toString());
+                priceDifference .setText(product.getPriceDifferenceInPercentage());
+            }
+        });
     }
 }
