@@ -62,6 +62,12 @@ public class ProductActivity extends AppCompatActivity {
 
         String productId = getIntent().getStringExtra("productId");
 
+        initViews();
+
+        initModel(productId);
+    }
+
+    private void initViews() {
         setContentView(R.layout.product_act);
         productNameTextView = findViewById(R.id.product_name_value);
         productIdTextView = findViewById(R.id.product_identifier_value);
@@ -72,41 +78,54 @@ public class ProductActivity extends AppCompatActivity {
         progressView = findViewById(R.id.indeterminate_bar);
         progressView = findViewById(R.id.indeterminate_bar);
         errorTextView = findViewById(R.id.error_text);
+    }
 
+    private void initModel(String productId) {
         ProductViewModel model = ViewModelProviders.of(this).get(ProductViewModel.class);
-        model.setProductErrorListener(new ProductErrorListener(){
+        model.setProductErrorListener(createProductErrorListener());
+        model.getProductMutableLiveData(productId, getPreviousId(productId)).observe(this, new Observer<Product>() {
+            @Override
+            public void onChanged(@Nullable Product product) {
+                updateViewContent(product);
+            }
+        });
+    }
+
+    private void updateViewContent(@Nullable Product product) {
+        progressView.setVisibility(View.GONE);
+        productView.setVisibility(View.VISIBLE);
+        productNameTextView.setText(product.getProductName());
+        productIdTextView.setText(product.getIdentifier());
+        currentPriceTextView.setText(product.getCurrentPrice().toString());
+        closingPriceTextView.setText(product.getPreviousDayClosingPrice().toString());
+        priceDifferenceTextView.setText(product.getPriceDifferenceInPercentage());
+    }
+
+    @NonNull
+    private ProductErrorListener createProductErrorListener() {
+        return new ProductErrorListener(){
             @Override
             public void onProductError() {
-                progressView.setVisibility(View.GONE);
-                errorTextView.setVisibility(View.VISIBLE);
+                showErrorView();
             }
 
             @Override
             public void onProductError(String customString) {
-                progressView.setVisibility(View.GONE);
-                errorTextView.setVisibility(View.VISIBLE);
+                showErrorView();
                 errorTextView.setText(customString);
             }
 
             @Override
             public void onProductError(BuxError buxError) {
-                progressView.setVisibility(View.GONE);
-                errorTextView.setVisibility(View.VISIBLE);
+                showErrorView();
                 errorTextView.setText(buxError.getMessage());
             }
-        });
-        model.getProductMutableLiveData(productId, getPreviousId(productId)).observe(this, new Observer<Product>() {
-            @Override
-            public void onChanged(@Nullable Product product) {
-                progressView.setVisibility(View.GONE);
-                productView.setVisibility(View.VISIBLE);
-                productNameTextView.setText(product.getProductName());
-                productIdTextView.setText(product.getIdentifier());
-                currentPriceTextView.setText(product.getCurrentPrice().toString());
-                closingPriceTextView.setText(product.getPreviousDayClosingPrice().toString());
-                priceDifferenceTextView.setText(product.getPriceDifferenceInPercentage());
-            }
-        });
+        };
+    }
+
+    private void showErrorView() {
+        progressView.setVisibility(View.GONE);
+        errorTextView.setVisibility(View.VISIBLE);
     }
 
     private String getPreviousId(String productId) {
@@ -115,7 +134,7 @@ public class ProductActivity extends AppCompatActivity {
         String lastId = sharedPreferences.getString(LAST_PRODUCT_ID, "");
         Log.d("Got previous id:", lastId);
         if(productId.equals(lastId)){
-            //We don't want to ubsubscribe if the last is the same as the current
+            //We don't want to unsubscribe if the last is the same as the current
             return "";
         } else{
             saveId(productId, sharedPreferences);
@@ -127,11 +146,5 @@ public class ProductActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(LAST_PRODUCT_ID, productId);
         editor.commit();
-    }
-
-    public interface ProductErrorListener {
-        void onProductError();
-        void onProductError(String customString);
-        void onProductError(BuxError buxError);
     }
 }

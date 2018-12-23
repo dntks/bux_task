@@ -28,7 +28,7 @@ public class ProductViewModel extends ViewModel {
 
     private ProductUpdater productUpdater = new ProductUpdaterNullObject();
 
-    private ProductActivity.ProductErrorListener productErrorListener;
+    private ProductErrorListener productErrorListener;
 
     public LiveData<Product> getProductMutableLiveData(String productId, final String previousId) {
         if (productMutableLiveData == null) {
@@ -72,7 +72,7 @@ public class ProductViewModel extends ViewModel {
         buxService.stopWebSocket();
     }
 
-    public void setProductErrorListener(ProductActivity.ProductErrorListener productErrorListener) {
+    public void setProductErrorListener(ProductErrorListener productErrorListener) {
         this.productErrorListener = productErrorListener;
     }
 }
